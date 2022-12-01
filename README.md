@@ -1,58 +1,67 @@
-# Hardhat TypeScript plugin boilerplate
+# ZeroDev Hardhat Plugin
 
-This is a sample Hardhat plugin written in TypeScript. Creating a Hardhat plugin
-can be as easy as extracting a part of your config into a different file and
-publishing it to npm.
+A [Hardhat](https://hardhat.org) plugin that runs a ZeroDev mock server.
 
-This sample project contains an example on how to do that, but also comes with
-many more features:
+## What
 
-- A mocha test suite ready to use
-- TravisCI already setup
-- A package.json with scripts and publishing info
-- Examples on how to do different things
+Sometimes you want to test you Dapps locally. To do that, ZeroDev provides a [mock server](https://github.com/zerodevapp/mock-server) to mimick a live paymaster on your local machine. This plugin automatically starts the mock server whenever you run `npx hardhat node` or `hh node` without the need for additional setup.
 
 ## Installation
 
-To start working on your project, just run
-
 ```bash
-npm install
+npm install @zerodevapp/hardhat "@nomiclabs/hardhat-ethers@^2.0.0" "ethers@^5.0.0"
 ```
 
-## Plugin development
+Import the plugin in your `hardhat.config.js`:
 
-Make sure to read our [Plugin Development Guide](https://hardhat.org/advanced/building-plugins.html) to learn how to build a plugin.
+```js
+require("@zerodevapp/hardhat");
+```
 
-## Testing
+Or if you are using TypeScript, in your `hardhat.config.ts`:
 
-Running `npm run test` will run every test located in the `test/` folder. They
-use [mocha](https://mochajs.org) and [chai](https://www.chaijs.com/),
-but you can customize them.
+```ts
+import "@zerodevapp/hardhat";
+```
 
-We recommend creating unit tests for your own modules, and integration tests for
-the interaction of the plugin with Hardhat and its dependencies.
+## Required plugins
 
-## Linting and autoformat
+- [@nomiclabs/hardhat-ethers](https://hardhat.org/hardhat-runner/plugins/nomiclabs-hardhat-ethers)
 
-All of Hardhat projects use [prettier](https://prettier.io/) and
-[tslint](https://palantir.github.io/tslint/).
+## Tasks
 
-You can check if your code style is correct by running `npm run lint`, and fix
-it with `npm run lint:fix`.
+This plugin overrides the `node` task:
 
-## Building the project
+```bash
+$ npx hardhat node
 
-Just run `npm run build` ️👷
+Verifier paymaster deployed at 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+ZeroDev mock server listening at http://127.0.0.1:3000
+Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
+...
+```
 
-## README file
+## Environment extensions
 
-This README describes this boilerplate project, but won't be very useful to your
-plugin users.
+This plugin exports a new environment variable under `hre.zeroMockUrl` which indicates the URL for the mock server. It's usually something like `http://127.0.0.1:3030`.
 
-Take a look at `README-TEMPLATE.md` for an example of what a Hardhat plugin's
-README should look like.
+## Usage
 
-## Migrating from Buidler?
+Configure your [ZeroDev SDK](https://www.npmjs.com/package/zerodev-sdk) to use the mock server:
 
-Take a look at [the migration guide](MIGRATION.md)!
+```ts
+import * as zd from "zerodev-sdk";
+
+await zd.getSigner({
+  localMode: true,
+  rpcUrl: "http://127.0.0.1:8545/", // address of hardhat JSON-RPC server
+  backendUrl: "http://127.0.0.1:3000", // address of ZeroDev mock server
+
+  // the following values can be of any value, see note below
+  projectId: "0db3bd22-d8ee-427a-8a00-4017f80d5ddd",
+  identity: "google",
+  token: "any-token-here",
+});
+```
+
+Note: _It's currently not possible to configure rate limites or other project dashboard features. The mock server will simply sign everything it receives._
