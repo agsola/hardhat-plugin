@@ -52,16 +52,28 @@ Configure your [ZeroDev SDK](https://www.npmjs.com/package/zerodev-sdk) to use t
 ```ts
 import * as zd from "zerodev-sdk";
 
-await zd.getSigner({
-  localMode: true,
-  rpcUrl: "http://127.0.0.1:8545/", // address of hardhat JSON-RPC server
-  backendUrl: "http://127.0.0.1:3000", // address of ZeroDev mock server
-
-  // the following values can be of any value, see note below
-  projectId: "0db3bd22-d8ee-427a-8a00-4017f80d5ddd",
-  identity: "google",
-  token: "any-token-here",
-});
+const wallet = await zd.getSigner(
+  {
+    projectId: "zerodev project id here",
+    identity: "google",
+    token: token,
+  },
+  {
+    // your local ethereum network rpc:
+    rpcUrl: "http://127.0.0.1:8545/",
+    // the mock server provides the following two:
+    backendUrl: "http://127.0.0.1:3030",
+    paymasterUrl: "http://127.0.0.1:3030",
+    // the same as the backendUrl with /rpc appended:
+    bundlerUrl: "http://127.0.0.1:3030/rpc",
+    // addresses where your contracts are deployed to:
+    contractAddresses: {
+      entrypoint: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      paymaster: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      walletFactory: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    },
+  }
+);
 ```
 
 Note: _It's currently not possible to configure rate limites or other project dashboard features. The mock server will simply sign everything it receives._

@@ -1,6 +1,6 @@
 {
   "name": "@zerodevapp/hardhat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Hardhat plugin for ZeroDev",
   "keywords": [
     "ethereum",
