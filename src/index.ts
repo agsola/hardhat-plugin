@@ -42,14 +42,25 @@ const startMockServerWithRetry = async (
   }).then(updateMockUrl);
 };
 
+const ONE_ETH = "0x1000000000000000000";
+
 task("node", async (args, hre, runSuper) => {
+  // all of the contracts deployed here will be deployed by the `0x0d` signer
+  const zdDeployer = await hre.ethers.getImpersonatedSigner(
+    "0x" + "0d".repeat(20)
+  );
+  await hre.ethers.provider.send("hardhat_setBalance", [
+    zdDeployer.address,
+    ONE_ETH,
+  ]);
+
   // create and fund paymaster
   const verifyingSigner = await hre.ethers.getImpersonatedSigner(
     "0xE7B7516Af57DD645DeCb52ec10b0Ce92315d8404"
   );
   await hre.ethers.provider.send("hardhat_setBalance", [
-    "0x73a073E6e3C2A0020995Fcc380ef86718c6ff6f3",
-    "0x10000",
+    verifyingSigner.address,
+    ONE_ETH,
   ]);
 
   // deploy contracts
@@ -67,12 +78,11 @@ task("node", async (args, hre, runSuper) => {
       walletFactoryArtifact.bytecode
     ),
   ]);
-  const entryPoint = await EntryPoint.deploy();
-  const verifyingPaymaster = await VerifyingPaymaster.deploy(
-    entryPoint.address,
-    verifyingSigner.address
-  );
-  const walletFactory = await WalletFactory.deploy();
+  const entryPoint = await EntryPoint.connect(zdDeployer).deploy();
+  const verifyingPaymaster = await VerifyingPaymaster.connect(
+    zdDeployer
+  ).deploy(entryPoint.address, verifyingSigner.address);
+  const walletFactory = await WalletFactory.connect(zdDeployer).deploy();
   const paymaster: Paymaster = {
     signer: verifyingSigner,
     contractAddress: verifyingPaymaster.address,

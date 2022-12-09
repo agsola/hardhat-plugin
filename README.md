@@ -35,8 +35,10 @@ This plugin overrides the `node` task:
 ```bash
 $ npx hardhat node
 
-Verifier paymaster deployed at 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
-ZeroDev mock server listening at http://127.0.0.1:3000
+EntryPoint deployed at 0x25663004a841AD611291556987Df171dc6286a43
+VerifyingPaymaster deployed at 0x808C0cCD79612719185F5B32Df337148b4F8271f
+WalletFactory deployed at 0xA839F38204e8B61c87470bFa472E4ADBF31E4d01
+ZeroDev mock server listening at http://127.0.0.1:3030
 Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
 ...
 ```
@@ -68,12 +70,14 @@ const wallet = await zd.getSigner(
     bundlerUrl: "http://127.0.0.1:3030/rpc",
     // addresses where your contracts are deployed to:
     contractAddresses: {
-      entrypoint: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      paymaster: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      walletFactory: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      entrypoint: "0x25663004a841AD611291556987Df171dc6286a43",
+      paymaster: "0x808C0cCD79612719185F5B32Df337148b4F8271f",
+      walletFactory: "0xA839F38204e8B61c87470bFa472E4ADBF31E4d01",
     },
   }
 );
 ```
+
+The values provided above should work for you by default if you haven't changed any configuration.
 
 Note: _It's currently not possible to configure rate limites or other project dashboard features. The mock server will simply sign everything it receives._
