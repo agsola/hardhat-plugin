@@ -35,9 +35,9 @@ This plugin overrides the `node` task:
 ```bash
 $ npx hardhat node
 
-EntryPoint deployed at 0x25663004a841AD611291556987Df171dc6286a43
-VerifyingPaymaster deployed at 0x808C0cCD79612719185F5B32Df337148b4F8271f
-WalletFactory deployed at 0xA839F38204e8B61c87470bFa472E4ADBF31E4d01
+EntryPoint deployed at 0xb81e8725d8Ede34A906Db901ED15cd41944ba6Ae
+VerifyingPaymaster deployed at 0x07225f1742C63Df795f9E2B4a5045e05D8D0A727
+WalletFactory deployed at 0x7Ce1DA5188067d08a0b4343cF1f97d7cC6097318
 ZeroDev mock server listening at http://127.0.0.1:3030
 Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
 ...
@@ -70,9 +70,9 @@ const wallet = await zd.getSigner(
     bundlerUrl: "http://127.0.0.1:3030/rpc",
     // addresses where your contracts are deployed to:
     contractAddresses: {
-      entrypoint: "0x25663004a841AD611291556987Df171dc6286a43",
-      paymaster: "0x808C0cCD79612719185F5B32Df337148b4F8271f",
-      walletFactory: "0xA839F38204e8B61c87470bFa472E4ADBF31E4d01",
+      entrypoint: "0xb81e8725d8Ede34A906Db901ED15cd41944ba6Ae",
+      paymaster: "0x07225f1742C63Df795f9E2B4a5045e05D8D0A727",
+      walletFactory: "0x7Ce1DA5188067d08a0b4343cF1f97d7cC6097318",
     },
   }
 );

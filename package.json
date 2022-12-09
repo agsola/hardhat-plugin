@@ -35,6 +35,6 @@
     "hardhat": "^2.0.0"
   },
   "dependencies": {
-    "@zerodevapp/mock-server": "0.1.2"
+    "@zerodevapp/mock-server": "^0.1.4"
   }
 }

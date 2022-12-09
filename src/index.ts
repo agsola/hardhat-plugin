@@ -42,25 +42,18 @@ const startMockServerWithRetry = async (
   }).then(updateMockUrl);
 };
 
-const ONE_ETH = "0x1000000000000000000";
+// This private key is public, do not send funds to it or they will be lost
+const PRIVATE_KEY = "0x0458d5ebcb35c98ae7447019f1cee7e55f23d718b5188cdd032d42d47b3ccf3c";
+
+// This is the hex equivalent of 10^18 * 100 (100 eth)
+const ONE_HUNDRED_ETH = "0x56BC75E2D63100000";
 
 task("node", async (args, hre, runSuper) => {
-  // all of the contracts deployed here will be deployed by the `0x0d` signer
-  const zdDeployer = await hre.ethers.getImpersonatedSigner(
-    "0x" + "0d".repeat(20)
-  );
+  // all of the contracts deployed here will be deployed by this signer
+  const zdSigner = new hre.ethers.Wallet(PRIVATE_KEY, hre.ethers.provider);
   await hre.ethers.provider.send("hardhat_setBalance", [
-    zdDeployer.address,
-    ONE_ETH,
-  ]);
-
-  // create and fund paymaster
-  const verifyingSigner = await hre.ethers.getImpersonatedSigner(
-    "0xE7B7516Af57DD645DeCb52ec10b0Ce92315d8404"
-  );
-  await hre.ethers.provider.send("hardhat_setBalance", [
-    verifyingSigner.address,
-    ONE_ETH,
+    zdSigner.address,
+    ONE_HUNDRED_ETH,
   ]);
 
   // deploy contracts
@@ -78,13 +71,13 @@ task("node", async (args, hre, runSuper) => {
       walletFactoryArtifact.bytecode
     ),
   ]);
-  const entryPoint = await EntryPoint.connect(zdDeployer).deploy();
+  const entryPoint = await EntryPoint.connect(zdSigner).deploy();
   const verifyingPaymaster = await VerifyingPaymaster.connect(
-    zdDeployer
-  ).deploy(entryPoint.address, verifyingSigner.address);
-  const walletFactory = await WalletFactory.connect(zdDeployer).deploy();
+    zdSigner
+  ).deploy(entryPoint.address, zdSigner.address);
+  const walletFactory = await WalletFactory.connect(zdSigner).deploy();
   const paymaster: Paymaster = {
-    signer: verifyingSigner,
+    signer: zdSigner,
     contractAddress: verifyingPaymaster.address,
   };
 
